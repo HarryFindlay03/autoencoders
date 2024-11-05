@@ -40,11 +40,11 @@ class VariationalEncoder(nn.Module):
 
         self.flatten = nn.Flatten()
 
-        self.fc1 = nn.Linear(28*28, 512)
-        self.fc2 = nn.Linear(512, 240)
+        self.fc1 = nn.Linear(28*28, 374)
+        # self.fc2 = nn.Linear(374, 150)
 
-        self.fc_mu = nn.Linear(240, 10)
-        self.fc_sigma = nn.Linear(240, 10)
+        self.fc_mu = nn.Linear(374, 10)
+        self.fc_sigma = nn.Linear(374, 10)
 
         # distributions
         self.N = distributions.Normal(0, 1)
@@ -56,7 +56,7 @@ class VariationalEncoder(nn.Module):
     def forward(self, x):
         x = self.flatten(x)
         x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
+        # x = F.relu(self.fc2(x))
 
         mu = self.fc_mu(x)
         sigma = torch.exp(self.fc_sigma(x))
@@ -72,11 +72,11 @@ class Decoder(nn.Module):
         super().__init__()
 
         self.decoder = nn.Sequential(
-            nn.Linear(10, 240),
+            nn.Linear(10, 374),
             nn.ReLU(),
-            nn.Linear(240, 512),
-            nn.ReLU(),
-            nn.Linear(512, 28*28),
+            # nn.Linear(150, 374),
+            # nn.ReLU(),
+            nn.Linear(374, 28*28),
             nn.Sigmoid()
         )
 
@@ -147,7 +147,7 @@ def main():
     # hyperparameters
     learning_rate = 1e-2
     batch_size = 64
-    epochs = 25
+    epochs = 100
 
     # loading data
     training_dataloader, testing_dataloader = get_data(training_data, testing_data, batch_size=batch_size)
